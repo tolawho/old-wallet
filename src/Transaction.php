@@ -9,7 +9,7 @@ class Transaction extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'wallet_transactions';
+    protected $table = 'transactions';
 
     protected $fillable = [
         'wallet_id', 'amount', 'hash', 'type', 'meta', 'deleted_at'

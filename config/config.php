@@ -16,4 +16,7 @@ return [
      * Change this if you need to extend the default Transaction Model
      */
     'transaction_model' => env('WALLET_TRANSACTION_MODEL', 'Depsimon\Wallet\Transaction'),
+
+    'transaction_hash' => '%05d%s',
+
 ];
