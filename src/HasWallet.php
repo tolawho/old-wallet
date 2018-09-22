@@ -4,6 +4,7 @@ namespace Depsimon\Wallet;
 
 use Exception;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 trait HasWallet
 {
@@ -174,7 +175,7 @@ trait HasWallet
         return $credits - $debits;
     }
 
-    private function uuid($prefix = '', $lenght = 13) {
+    private function uuid($lenght = 13) {
         // uniqid gives 13 chars, but you could adjust it to your needs.
         if (function_exists("random_bytes")) {
             $bytes = random_bytes(ceil($lenght / 2));
