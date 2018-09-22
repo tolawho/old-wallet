@@ -61,11 +61,13 @@ trait HasWallet
         try {
             DB::beginTransaction();
 
+            if(!$this->wallet->address) {
+                $this->wallet->address = $this->uuid(36);
+            }
             if ($accepted) {
                 $this->wallet->balance += $amount;
                 $this->wallet->save();
             } elseif (!$this->wallet->exists) {
-                $this->wallet->address = $this->uuid(36);
                 $this->wallet->save();
             }
 
@@ -87,7 +89,7 @@ trait HasWallet
             return $transaction;
         } catch(Exception $e) {
             DB::rollBack();
-            exit(ucfirst($type) . ' not accepted!');
+            exit(sprintf('The transaction(%s) has not been accepted', $type));
         }
     }
 
@@ -117,11 +119,13 @@ trait HasWallet
         try {
             DB::beginTransaction();
 
+            if(!$this->wallet->address) {
+                $this->wallet->address = $this->uuid(36);
+            }
             if ($accepted) {
                 $this->wallet->balance -= $amount;
                 $this->wallet->save();
             } elseif (!$this->wallet->exists) {
-                $this->wallet->address = $this->uuid(36);
                 $this->wallet->save();
             }
             $hash = sprintf(config('wallet.transaction_hash'), $this->id, $this->uuid(5));
@@ -142,7 +146,7 @@ trait HasWallet
             return $transaction;
         } catch(Exception $e) {
             DB::rollback();
-            exit(ucfirst($type) . ' not accepted!');
+            exit(sprintf('The transaction(%s) has not been accepted', $type));
         }
     }
 
