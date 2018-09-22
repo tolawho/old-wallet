@@ -57,26 +57,37 @@ trait HasWallet
     {
         $accepted = $amount >= 0 && !$forceFail ? true : false;
 
-        if ($accepted) {
-            $this->wallet->balance += $amount;
-            $this->wallet->save();
-        } elseif (!$this->wallet->exists) {
-            $this->wallet->save();
-        }
+        try {
+            DB::beginTransaction();
 
-        $transaction = $this->wallet->transactions()
-            ->create([
-                'amount' => $amount,
-                'hash' => uniqid('lwch_'),
-                'type' => $type,
-                'meta' => $meta,
-                'deleted_at' => $accepted ? null : Carbon::now(),
-            ]);
+            if ($accepted) {
+                $this->wallet->balance += $amount;
+                $this->wallet->save();
+            } elseif (!$this->wallet->exists) {
+                $this->wallet->address = $this->uuid(36);
+                $this->wallet->save();
+            }
 
-        if (!$accepted && !$forceFail) {
-            throw new UnacceptedTransactionException($transaction, 'Deposit not accepted!');
+            $hash = sprintf(config('wallet.transaction_hash'), $this->id, $this->uuid(5));
+            $transaction = $this->wallet->transactions()
+                ->create([
+                    'amount' => $amount,
+                    'hash' => $hash,
+                    'type' => $type,
+                    'meta' => $meta,
+                    'deleted_at' => $accepted ? null : Carbon::now(),
+                ]);
+
+            if (!$accepted && !$forceFail) {
+                throw new UnacceptedTransactionException($transaction, ucfirst($type) . ' not accepted!');
+            }
+
+            DB::commit();
+            return $transaction;
+        } catch(Exception $e) {
+            DB::rollBack();
+            exit(ucfirst($type) . ' not accepted!');
         }
-        return $transaction;
     }
 
     /**
@@ -102,27 +113,36 @@ trait HasWallet
     public function withdraw($amount, $type = 'withdraw', $meta = [], $shouldAccept = true)
     {
         $accepted = $shouldAccept ? $this->canWithdraw($amount) : true;
+        try {
+            DB::beginTransaction();
 
-        if ($accepted) {
-            $this->wallet->balance -= $amount;
-            $this->wallet->save();
-        } elseif (!$this->wallet->exists) {
-            $this->wallet->save();
+            if ($accepted) {
+                $this->wallet->balance -= $amount;
+                $this->wallet->save();
+            } elseif (!$this->wallet->exists) {
+                $this->wallet->address = $this->uuid(36);
+                $this->wallet->save();
+            }
+            $hash = sprintf(config('wallet.transaction_hash'), $this->id, $this->uuid(5));
+            $transaction = $this->wallet->transactions()
+                ->create([
+                    'amount' => $amount,
+                    'hash' => $hash,
+                    'type' => $type,
+                    'meta' => $meta,
+                    'deleted_at' => $accepted ? null : Carbon::now(),
+                ]);
+
+            if (!$accepted) {
+                throw new UnacceptedTransactionException($transaction, ucfirst($type) . ' not accepted!');
+            }
+
+            DB::commit();
+            return $transaction;
+        } catch(Exception $e) {
+            DB::rollback();
+            exit(ucfirst($type) . ' not accepted!');
         }
-
-        $transaction = $this->wallet->transactions()
-            ->create([
-                'amount' => $amount,
-                'hash' => uniqid('lwch_'),
-                'type' => $type,
-                'meta' => $meta,
-                'deleted_at' => $accepted ? null : Carbon::now(),
-            ]);
-
-        if (!$accepted) {
-            throw new UnacceptedTransactionException($transaction, 'Withdrawal not accepted!');
-        }
-        return $transaction;
     }
 
     /**
@@ -152,5 +172,17 @@ trait HasWallet
             ->sum('amount');
 
         return $credits - $debits;
+    }
+
+    private function uuid($prefix = '', $lenght = 13) {
+        // uniqid gives 13 chars, but you could adjust it to your needs.
+        if (function_exists("random_bytes")) {
+            $bytes = random_bytes(ceil($lenght / 2));
+        } elseif (function_exists("openssl_random_pseudo_bytes")) {
+            $bytes = openssl_random_pseudo_bytes(ceil($lenght / 2));
+        } else {
+            throw new Exception("no cryptographically secure random function available");
+        }
+        return substr(bin2hex($bytes), 0, $lenght);
     }
 }

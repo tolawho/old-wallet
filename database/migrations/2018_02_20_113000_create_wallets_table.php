@@ -17,9 +17,13 @@ class CreateWalletsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('owner_id')->nullable();
             $table->string('owner_type')->nullable();
+            $table->uuid('address')->unique();
 
-            if (config('wallet.column_type') == 'decimal') {
+            $balanceColumnType = config('wallet.column_type');
+            if ($balanceColumnType == 'decimal') {
                 $table->decimal('balance', 12, 4)->default(0); // amount is an decimal, it could be "dollars" or "cents"
+            } elseif ($balanceColumnType == 'float') {
+                $table->float('balance', 8, 2); // amount is an float, it could be "dollars" or "cents"
             } else {
                 $table->integer('balance');
             }
