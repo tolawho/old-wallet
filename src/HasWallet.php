@@ -61,12 +61,12 @@ trait HasWallet
 
         try {
             DB::beginTransaction();
-
             if(!$this->wallet->address) {
-                $this->wallet->address = substr((string) Str::uuid(), 4, 19);
+                $this->wallet->address = str_replace('-', '', substr((string) Str::uuid(), 4, 23));
             }
             if ($accepted) {
                 $this->wallet->balance += $amount;
+
                 $this->wallet->save();
             } elseif (!$this->wallet->exists) {
                 $this->wallet->save();
@@ -75,7 +75,7 @@ trait HasWallet
             $transaction = $this->wallet->transactions()
                 ->create([
                     'amount' => $amount,
-                    'hash' => substr((string) Str::uuid(), 4, 13),
+                    'hash' => substr((string) Str::uuid(), 4, 9),
                     'type' => $type,
                     'meta' => $meta,
                     'deleted_at' => $accepted ? null : Carbon::now(),
@@ -119,9 +119,8 @@ trait HasWallet
         $accepted = $shouldAccept ? $this->canWithdraw($amount) : true;
         try {
             DB::beginTransaction();
-
             if(!$this->wallet->address) {
-                $this->wallet->address = substr((string) Str::uuid(), 4, 19);
+                $this->wallet->address = str_replace('-', '', substr((string) Str::uuid(), 4, 23));
             }
             if ($accepted) {
                 $this->wallet->balance -= $amount;
@@ -133,7 +132,7 @@ trait HasWallet
             $transaction = $this->wallet->transactions()
                 ->create([
                     'amount' => $amount,
-                    'hash' => substr((string) Str::uuid(), 4, 13),
+                    'hash' => substr((string) Str::uuid(), 4, 9),
                     'type' => $type,
                     'meta' => $meta,
                     'deleted_at' => $accepted ? null : Carbon::now(),
