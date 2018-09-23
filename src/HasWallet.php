@@ -89,6 +89,7 @@ trait HasWallet
             return $transaction;
         } catch(Exception $e) {
             DB::rollBack();
+            logger($e);
             exit(sprintf('The transaction(%s) has not been accepted', $type));
         }
     }
@@ -146,6 +147,7 @@ trait HasWallet
             return $transaction;
         } catch(Exception $e) {
             DB::rollback();
+            logger($e);
             exit(sprintf('The transaction(%s) has not been accepted', $type));
         }
     }

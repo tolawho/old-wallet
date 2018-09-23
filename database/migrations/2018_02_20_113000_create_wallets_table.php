@@ -17,7 +17,7 @@ class CreateWalletsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('owner_id')->nullable();
             $table->string('owner_type')->nullable();
-            $table->uuid('address')->unique();
+            $table->uuid('address')->unique()->nullable();
 
             $balanceColumnType = config('wallet.column_type');
             if ($balanceColumnType == 'decimal') {
