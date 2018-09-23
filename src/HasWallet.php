@@ -180,4 +180,11 @@ trait HasWallet
         return str_replace('-', '', substr((string) Str::uuid(), 4, 23));
     }
 
+    protected function createWallet()
+    {
+        if (!$this->wallet->exists) {
+            $this->wallet->save();
+        }
+    }
+
 }
