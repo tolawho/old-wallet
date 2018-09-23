@@ -5,6 +5,7 @@ namespace Depsimon\Wallet;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 trait HasWallet
 {
@@ -61,9 +62,6 @@ trait HasWallet
         try {
             DB::beginTransaction();
 
-            if(!$this->wallet->address) {
-                $this->wallet->address = $this->uuid(36);
-            }
             if ($accepted) {
                 $this->wallet->balance += $amount;
                 $this->wallet->save();
@@ -71,11 +69,10 @@ trait HasWallet
                 $this->wallet->save();
             }
 
-            $hash = sprintf(config('wallet.transaction_hash'), $this->id, $this->uuid(5));
             $transaction = $this->wallet->transactions()
                 ->create([
                     'amount' => $amount,
-                    'hash' => $hash,
+                    'hash' => substr((string) Str::uuid(), 4, 13),
                     'type' => $type,
                     'meta' => $meta,
                     'deleted_at' => $accepted ? null : Carbon::now(),
@@ -119,9 +116,6 @@ trait HasWallet
         try {
             DB::beginTransaction();
 
-            if(!$this->wallet->address) {
-                $this->wallet->address = $this->uuid(36);
-            }
             if ($accepted) {
                 $this->wallet->balance -= $amount;
                 $this->wallet->save();
@@ -132,7 +126,7 @@ trait HasWallet
             $transaction = $this->wallet->transactions()
                 ->create([
                     'amount' => $amount,
-                    'hash' => $hash,
+                    'hash' => substr((string) Str::uuid(), 4, 13),
                     'type' => $type,
                     'meta' => $meta,
                     'deleted_at' => $accepted ? null : Carbon::now(),
@@ -179,15 +173,4 @@ trait HasWallet
         return $credits - $debits;
     }
 
-    private function uuid($lenght = 13) {
-        // uniqid gives 13 chars, but you could adjust it to your needs.
-        if (function_exists("random_bytes")) {
-            $bytes = random_bytes(ceil($lenght / 2));
-        } elseif (function_exists("openssl_random_pseudo_bytes")) {
-            $bytes = openssl_random_pseudo_bytes(ceil($lenght / 2));
-        } else {
-            throw new Exception("no cryptographically secure random function available");
-        }
-        return substr(bin2hex($bytes), 0, $lenght);
-    }
 }
