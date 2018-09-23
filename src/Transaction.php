@@ -12,7 +12,7 @@ class Transaction extends Model
     protected $table = 'transactions';
 
     protected $fillable = [
-        'wallet_id', 'amount', 'hash', 'type', 'meta', 'deleted_at'
+        'wallet_id', 'amount', 'hash', 'type', 'meta'
     ];
 
     protected $casts = [

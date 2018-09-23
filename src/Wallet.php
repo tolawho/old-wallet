@@ -18,22 +18,8 @@ class Wallet extends Model
         return $this->hasMany(config('wallet.transaction_model', Transaction::class));
     }
 
-    /**
-     * Retrieve owner
-     */
-    public function owner()
+    public function user()
     {
-        return $this->morphTo();
-    }
-
-    /**
-     * Set the wallet's address.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setAddressAttribute($value)
-    {
-        return $value? $value : substr((string) Str::uuid(), 4, 19);
+        return $this->belongsTo(config('wallet.user_model', 'App\User'));
     }
 }

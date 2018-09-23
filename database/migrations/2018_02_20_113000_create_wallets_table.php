@@ -15,21 +15,11 @@ class CreateWalletsTable extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('owner_id')->nullable();
-            $table->string('owner_type')->nullable();
+            $table->unsignedInteger('user_id');
             $table->uuid('address')->unique()->nullable();
-
-            $balanceColumnType = config('wallet.column_type');
-            if ($balanceColumnType == 'decimal') {
-                $table->decimal('balance', 12, 4)->default(0); // amount is an decimal, it could be "dollars" or "cents"
-            } elseif ($balanceColumnType == 'float') {
-                $table->float('balance', 8, 2); // amount is an float, it could be "dollars" or "cents"
-            } else {
-                $table->integer('balance');
-            }
-
+            // amount is an float, it could be "dollars" or "cents"
+            $table->float('balance', 8, 2);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

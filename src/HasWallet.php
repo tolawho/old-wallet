@@ -22,7 +22,10 @@ trait HasWallet
      */
     public function wallet()
     {
-        return $this->morphOne(Wallet::class, 'owner')->withDefault();
+        return $this->hasOne(Wallet::class)->withDefault([
+            'address' => $this->walletAddress(),
+            'balance' => 0.0
+        ]);
     }
 
     /**
@@ -32,9 +35,7 @@ trait HasWallet
     {
         return $this->hasManyThrough(
             config('wallet.transaction_model', Transaction::class),
-            config('wallet.wallet_model', Wallet::class),
-            'owner_id',
-            'wallet_id'
+            config('wallet.wallet_model', Wallet::class)
         )->latest();
     }
 
@@ -61,9 +62,6 @@ trait HasWallet
 
         try {
             DB::beginTransaction();
-            if(!$this->wallet->address) {
-                $this->wallet->address = str_replace('-', '', substr((string) Str::uuid(), 4, 23));
-            }
             if ($accepted) {
                 $this->wallet->balance += $amount;
 
@@ -77,12 +75,12 @@ trait HasWallet
                     'amount' => $amount,
                     'hash' => substr((string) Str::uuid(), 4, 9),
                     'type' => $type,
-                    'meta' => $meta,
-                    'deleted_at' => $accepted ? null : Carbon::now(),
+                    'meta' => $meta
                 ]);
 
             if (!$accepted && !$forceFail) {
-                throw new UnacceptedTransactionException($transaction, ucfirst($type) . ' not accepted!');
+                throw new Exception(sprintf('The transaction(%s) has not been accepted', $type));
+                logger($transaction);
             }
 
             DB::commit();
@@ -90,7 +88,7 @@ trait HasWallet
         } catch(Exception $e) {
             DB::rollBack();
             logger($e);
-            exit(sprintf('The transaction(%s) has not been accepted', $type));
+            return json_encode([]);
         }
     }
 
@@ -119,9 +117,6 @@ trait HasWallet
         $accepted = $shouldAccept ? $this->canWithdraw($amount) : true;
         try {
             DB::beginTransaction();
-            if(!$this->wallet->address) {
-                $this->wallet->address = str_replace('-', '', substr((string) Str::uuid(), 4, 23));
-            }
             if ($accepted) {
                 $this->wallet->balance -= $amount;
                 $this->wallet->save();
@@ -135,11 +130,11 @@ trait HasWallet
                     'hash' => substr((string) Str::uuid(), 4, 9),
                     'type' => $type,
                     'meta' => $meta,
-                    'deleted_at' => $accepted ? null : Carbon::now(),
                 ]);
 
             if (!$accepted) {
-                throw new UnacceptedTransactionException($transaction, ucfirst($type) . ' not accepted!');
+                throw new Exception(sprintf('The transaction(%s) has not been accepted', $type));
+                logger($transaction);
             }
 
             DB::commit();
@@ -147,7 +142,7 @@ trait HasWallet
         } catch(Exception $e) {
             DB::rollback();
             logger($e);
-            exit(sprintf('The transaction(%s) has not been accepted', $type));
+            return json_encode([]);
         }
     }
 
@@ -178,6 +173,11 @@ trait HasWallet
             ->sum('amount');
 
         return $credits - $debits;
+    }
+
+    protected function walletAddress()
+    {
+        return str_replace('-', '', substr((string) Str::uuid(), 4, 23));
     }
 
 }
