@@ -62,6 +62,9 @@ trait HasWallet
         try {
             DB::beginTransaction();
 
+            if(!$this->wallet->address) {
+                $this->wallet->address = substr((string) Str::uuid(), 4, 19);
+            }
             if ($accepted) {
                 $this->wallet->balance += $amount;
                 $this->wallet->save();
@@ -116,13 +119,16 @@ trait HasWallet
         try {
             DB::beginTransaction();
 
+            if(!$this->wallet->address) {
+                $this->wallet->address = substr((string) Str::uuid(), 4, 19);
+            }
             if ($accepted) {
                 $this->wallet->balance -= $amount;
                 $this->wallet->save();
             } elseif (!$this->wallet->exists) {
                 $this->wallet->save();
             }
-            $hash = sprintf(config('wallet.transaction_hash'), $this->id, $this->uuid(5));
+
             $transaction = $this->wallet->transactions()
                 ->create([
                     'amount' => $amount,
