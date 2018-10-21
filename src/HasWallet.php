@@ -85,7 +85,7 @@ trait HasWallet
 
             DB::commit();
             return $transaction;
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             logger($e);
             return json_encode([]);
@@ -139,7 +139,7 @@ trait HasWallet
 
             DB::commit();
             return $transaction;
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             DB::rollback();
             logger($e);
             return json_encode([]);
@@ -164,13 +164,9 @@ trait HasWallet
      */
     public function actualBalance()
     {
-        $credits = $this->wallet->transactions()
-            ->whereIn('type', ['deposit', 'refund'])
-            ->sum('amount');
+        $credits = $this->wallet->transactions()->whereIn('type', ['deposit', 'refund', 'receive'])->sum('amount');
 
-        $debits = $this->wallet->transactions()
-            ->whereIn('type', ['withdraw', 'payout'])
-            ->sum('amount');
+        $debits = $this->wallet->transactions()->whereIn('type', ['withdraw', 'payout', 'send'])->sum('amount');
 
         return $credits - $debits;
     }
@@ -179,12 +175,4 @@ trait HasWallet
     {
         return str_replace('-', '', substr((string) Str::uuid(), 4, 23));
     }
-
-    protected function createWallet()
-    {
-        if (!$this->wallet->exists) {
-            $this->wallet->save();
-        }
-    }
-
 }
