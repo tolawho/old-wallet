@@ -1,6 +1,6 @@
 <?php
 
-namespace Depsimon\Wallet;
+namespace Tolawho\Wallet;
 
 use Illuminate\Support\ServiceProvider;
 

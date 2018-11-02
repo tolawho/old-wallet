@@ -1,11 +1,11 @@
 <?php
 
-namespace Depsimon\Wallet\Tests\Unit;
+namespace Tolawho\Wallet\Tests\Unit;
 
-use Depsimon\Wallet\Wallet;
-use Depsimon\Wallet\UnacceptedTransactionException;
-use Depsimon\Wallet\Tests\TestCase;
-use Depsimon\Wallet\Tests\Models\User;
+use Tolawho\Wallet\Wallet;
+use Tolawho\Wallet\UnacceptedTransactionException;
+use Tolawho\Wallet\Tests\TestCase;
+use Tolawho\Wallet\Tests\Models\User;
 
 class HasWalletTest extends TestCase
 {

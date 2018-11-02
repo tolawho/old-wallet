@@ -1,7 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
-use Depsimon\Wallet\Tests\Models\User;
+use Tolawho\Wallet\Tests\Models\User;
 
 $factory->define(User::class, function (Faker $faker) {
     return [

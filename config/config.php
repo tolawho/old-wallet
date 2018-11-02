@@ -11,11 +11,11 @@ return [
     /**
      * Change this if you need to extend the default Wallet Model
      */
-    'wallet_model' => 'Depsimon\Wallet\Wallet',
+    'wallet_model' => 'Tolawho\Wallet\Wallet',
 
     /**
      * Change this if you need to extend the default Transaction Model
      */
-    'transaction_model' => 'Depsimon\Wallet\Transaction',
+    'transaction_model' => 'Tolawho\Wallet\Transaction',
 
 ];

@@ -1,6 +1,6 @@
 <?php
 
-namespace Depsimon\Wallet\Tests;
+namespace Tolawho\Wallet\Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -20,7 +20,7 @@ class TestCase extends BaseTestCase
     protected function getPackageProviders($app)
     {
         return [
-            'Depsimon\Wallet\WalletServiceProvider'
+            'Tolawho\Wallet\WalletServiceProvider'
         ];
     }
 }
