@@ -1,5 +1,6 @@
 # Laravel Wallet
 
+Forked https://github.com/MannikJ/laravel-wallet
 In a few projects I had to implement a virtual currency. The user would buy packs of credits with Stripe and then use them in the app in exchange of services or goods.
 This package is a small and simple implementation of this concept with place for customization.
 
@@ -8,7 +9,7 @@ This package is a small and simple implementation of this concept with place for
 Install the package with composer:
 
 ```bash
-composer require depsimon/laravel-wallet
+composer require tolawho/wallet
 ```
 
 ## Run Migrations
@@ -16,7 +17,7 @@ composer require depsimon/laravel-wallet
 Publish the migrations with this artisan command:
 
 ```bash
-php artisan vendor:publish --provider="Depsimon\Wallet\WalletServiceProvider" --tag=migrations
+php artisan vendor:publish --provider="Tolawho\Wallet\WalletServiceProvider" --tag=migrations
 ```
 
 ## Configuration
@@ -24,7 +25,7 @@ php artisan vendor:publish --provider="Depsimon\Wallet\WalletServiceProvider" --
 You can publish the config file with this artisan command:
 
 ```bash
-php artisan vendor:publish --provider="Depsimon\Wallet\WalletServiceProvider" --tag=config
+php artisan vendor:publish --provider="Tolawho\Wallet\WalletServiceProvider" --tag=config
 ```
 
 This will merge the `wallet.php` config file where you can specify the Users, Wallets & Transactions classes if you have custom ones.
@@ -35,7 +36,7 @@ Add the `HasWallet` trait to your User model.
 
 ``` php
 
-use Depsimon\Wallet\HasWallet;
+use Tolawho\Wallet\HasWallet;
 
 class User extends Model
 {
@@ -77,12 +78,8 @@ To run the tests just make sure to install the dependencies via `composer instal
 
 ## Security
 
-If you discover any security related issues, please email simon@webartisan.be instead of using the issue tracker.
+If you discover any security related issues, please email tolawho@gmail.com instead of using the issue tracker.
 
 ## Credits
 
-- [Simon Depelchin](https://github.com/depsimon)
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+- [Thanh Dinh](https://github.com/tolawho)

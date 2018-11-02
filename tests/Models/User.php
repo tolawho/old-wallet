@@ -1,9 +1,9 @@
 <?php
 
-namespace Depsimon\Wallet\Tests\Models;
+namespace Tolawho\Wallet\Tests\Models;
 
+use Tolawho\Wallet\HasWallet;
 use Illuminate\Foundation\Auth\User as AuthUser;
-use Depsimon\Wallet\HasWallet;
 
 class User extends AuthUser
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Depsimon\Wallet;
+namespace Tolawho\Wallet;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Depsimon\Wallet\Wallet
+ * @see \Tolawho\Wallet\Wallet
  */
 class WalletFacade extends Facade
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Depsimon\Wallet;
+namespace Tolawho\Wallet;
 
 use Exception;
 use Illuminate\Support\Carbon;
@@ -54,7 +54,7 @@ trait HasWallet
      * @param  integer $amount
      * @param  string  $type
      * @param  array   $meta
-     * @return Depsimon\Wallet\Transaction
+     * @return Tolawho\Wallet\Transaction
      */
     public function deposit($amount, $type = 'deposit', $meta = [], $forceFail = false)
     {
@@ -97,7 +97,7 @@ trait HasWallet
      * @param  integer $amount
      * @param  string  $type
      * @param  array   $meta
-     * @return Depsimon\Wallet\Transaction
+     * @return Tolawho\Wallet\Transaction
      */
     public function failDeposit($amount, $type = 'deposit', $meta = [])
     {
@@ -110,7 +110,7 @@ trait HasWallet
      * @param  string  $type
      * @param  array   $meta
      * @param  boolean $shouldAccept
-     * @return Depsimon\Wallet\Transaction
+     * @return Tolawho\Wallet\Transaction
      */
     public function withdraw($amount, $type = 'withdraw', $meta = [], $shouldAccept = true)
     {
