@@ -1,8 +1,9 @@
-# Laravel Wallet
+# Wallet
 
-Forked https://github.com/MannikJ/laravel-wallet
 In a few projects I had to implement a virtual currency. The user would buy packs of credits with Stripe and then use them in the app in exchange of services or goods.
 This package is a small and simple implementation of this concept with place for customization.
+
+Forked from [MannikJ](https://github.com/MannikJ/laravel-wallet)
 
 ## Installation
 
